@@ -48,7 +48,7 @@ const LandingPage = () => {
       </div>
 
       <Carousel
-        className="w-full py-10 "
+        className="w-full py-10"
         plugins={[
           Autoplay({
             delay: 2000,
