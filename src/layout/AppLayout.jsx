@@ -1,4 +1,4 @@
-import StarBackground from "../components/StarryBackground";
+import StarBackground from "../components/StarBackground";
 import "../App.css";
 import { Outlet } from "react-router-dom";
 import Header from "@/components/Header";
