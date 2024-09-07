@@ -7,6 +7,15 @@ import { getSingleJob, updateHiringStatus } from "../api/apiJobs";
 import { useEffect } from "react";
 import { Briefcase, DoorClosed, DoorOpen, MapPinIcon } from "lucide-react";
 import MDEditor from "@uiw/react-md-editor";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import ApplyJob from "../components/ApplyJob";
+import ApplicationCard from "../components/ApplicationCard";
 
 const JobPage = () => {
   const { isLoaded, user } = useUser();
@@ -30,13 +39,20 @@ const JobPage = () => {
   const handleStatusChange = (value) => {
     const isOpen = value === "open";
     fnHiringStatus(isOpen);
+    fnJob();
   };
 
-  useEffect(() => { 
+  const isCandidate = job?.applications?.some(
+    (application) => application.candidate_id === user?.id
+  );
+
+  const isRecruiter = job?.recruiter_id === user?.id;
+
+  useEffect(() => {
     if (isLoaded) fnJob();
   }, [isLoaded]);
 
-  if (!isLoaded || loadingJob) {
+  if (!isLoaded || loadingJob || loadingHiringStatus) {
     return <BarLoader className="mb-4" width={"100%"} color="#36d7b7" />;
   }
 
@@ -53,9 +69,11 @@ const JobPage = () => {
         <div className="flex gap-2 items-center">
           <MapPinIcon /> {job?.location}
         </div>
-        <div className="flex gap-2 items-center">
-          <Briefcase /> {job?.applications?.length} Applicants
-        </div>
+        {isRecruiter && (
+          <div className="flex gap-2 items-center">
+            <Briefcase /> {job?.applications?.length} Applicants
+          </div>
+        )}
         <div className="flex gap-2 items-center">
           {job?.isOpen ? (
             <>
@@ -69,7 +87,23 @@ const JobPage = () => {
         </div>
       </div>
 
-      {/* Hiring Status */}
+      {isRecruiter && (
+        <Select onValueChange={handleStatusChange}>
+          <SelectTrigger
+            className={`w-full ${job?.isOpen ? "bg-green-950" : "bg-red-950"}`}
+          >
+            <SelectValue
+              placeholder={
+                "Hiring Status " + (job?.isOpen ? "(Open)" : "(Closed)")
+              }
+            />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="open">Open</SelectItem>
+            <SelectItem value="closed">Closed</SelectItem>
+          </SelectContent>
+        </Select>
+      )}
 
       <h2 className="text-2xl sm:text-3xl font-bold">About the job</h2>
       <p className="sm:text-lg">{job?.description}</p>
@@ -80,10 +114,33 @@ const JobPage = () => {
 
       <MDEditor.Markdown
         source={job?.requirements}
-        className="bg-transparent sm:text-lg"
+        className="bg-transparent sm:text-lg p-2 rounded-lg"
       />
 
-      {/* render applications */}
+      {!isRecruiter && (
+        <ApplyJob
+          user={user}
+          job={job}
+          applied={job?.applications?.find(
+            (application) => application.candidate_id === user.id
+          )}
+          fetchJob={fnJob}
+        />
+      )}
+
+      {job?.applications?.length > 0 && (isRecruiter || isCandidate) && (
+        <div className="flex flex-col gap-2">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-5">Applications</h2>
+          {job?.applications.map((application) => (
+            <ApplicationCard
+              key={application.id}
+              application={application}
+              isCandidate={isCandidate}
+              job={job}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

@@ -14,8 +14,8 @@ const StarBackground = () => {
       x: Math.random() * width,
       y: Math.random() * height,
       radius: Math.random() * 4,
-      speed: Math.random() * 0.7,
-      blinkSpeed: Math.random() * 0.02 + 0.02,
+      speed: Math.random() * 0.1,
+      blinkSpeed: Math.random() * 0.001 + 0.01,
       opacity: Math.random(),
       blinkDirection: Math.random() > 0.5 ? 1 : -1,
     }));
