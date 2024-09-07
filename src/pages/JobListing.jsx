@@ -32,7 +32,7 @@ const JobListing = () => {
   const [company_id, setCompany_id] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { isLoaded } = useUser();
+  const { isLoaded, user } = useUser();
 
   const {
     fn: fnJobs,
@@ -150,6 +150,7 @@ const JobListing = () => {
               <JobCard
                 key={job.id}
                 job={job}
+                isMyJob={job.recruiter_id === user.id}
                 previouslySaved={job?.saved?.length > 0}
               />
             ))

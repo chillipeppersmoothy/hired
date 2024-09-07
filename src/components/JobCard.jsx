@@ -33,14 +33,14 @@ const JobCard = ({
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="flex flex-col">
         <CardTitle className="flex justify-between font-bold">
           {job.title}
           {isMyJob && <Trash2Icon size={18} className="cursor-pointer" />}
         </CardTitle>
       </CardHeader>
 
-      <CardContent>
+      <CardContent className="flex flex-col gap-4 flex-1">
         <div>
           {job.company && (
             <img
@@ -49,12 +49,12 @@ const JobCard = ({
               className="h-6"
             />
           )}
-          <div className="flex mt-4 mb-3 items-center gap-2">
+          <div className="flex mt-4 items-center gap-2">
             <MapPinIcon size={15} /> {job.location}
           </div>
         </div>
         <hr />
-        <div className="mt-4 h-16">
+        <div className="mt-4">
           {`${job.description.substring(0, job.description.indexOf("."))}...`}
         </div>
       </CardContent>

@@ -38,18 +38,34 @@ const Header = () => {
           <h1 className="text-5xl font-bold pl-5 sm:pl-1 lg:pl-8">HIRED</h1>
         </span>
 
-        <div className="flex gap-8">
+        <div className="flex gap-4">
           {user?.unsafeMetadata.role === "recruiter" && (
             <Link to="/post-job">
-              <Button variant="destructive" className="rounded-full">
+              <Button variant="outline" className="rounded-full" type="button">
                 <PenBox size={20} className="mr-2" />
                 Post a Job
               </Button>
             </Link>
           )}
+          <Link to="/my-jobs">
+            <Button variant="outline" className="rounded-full" type="button">
+              <BriefcaseBusiness size={20} className="mr-2" />
+              My Jobs
+            </Button>
+          </Link>
+          <Link to="/saved-jobs">
+            <Button variant="outline" className="rounded-full" type="button">
+              <Heart size={20} className="mr-2" />
+              Saved Jobs
+            </Button>
+          </Link>
 
           <SignedOut>
-            <Button variant="outline" onClick={() => setShowSignIn(true)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setShowSignIn(true)}
+            >
               Sign In
             </Button>
           </SignedOut>
@@ -60,20 +76,7 @@ const Header = () => {
                   avatarBox: "w-10 h-10",
                 },
               }}
-            >
-              <UserButton.MenuItems>
-                <UserButton.Link
-                  label="My Jobs"
-                  labelIcon={<BriefcaseBusiness size={15} />}
-                  href="/my-jobs"
-                />
-                <UserButton.Link
-                  label="Saved Jobs"
-                  labelIcon={<Heart size={15} />}
-                  href="/saved-jobs"
-                />
-              </UserButton.MenuItems>
-            </UserButton>
+            ></UserButton>
           </SignedIn>
         </div>
       </nav>
