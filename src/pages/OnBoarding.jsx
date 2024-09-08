@@ -17,6 +17,7 @@ const OnBoarding = () => {
   };
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     if (userRole) {
       navigate(userRole === "recruiter" ? "/post-job" : "/jobs");
     }

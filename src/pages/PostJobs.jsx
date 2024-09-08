@@ -64,6 +64,7 @@ const PostJobs = () => {
   };
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     if (isLoaded) fnCompanies();
   }, [isLoaded]);
 

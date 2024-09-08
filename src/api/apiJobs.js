@@ -1,12 +1,18 @@
 import supabaseClient from "../utils/superbase";
 
-// get all he jobs
-export const getJobs = async (token, { location, company_id, searchQuery }) => {
+// get n jobs
+export const getJobs = async (
+  token,
+  { location, company_id, searchQuery },
+  startIndex,
+  endIndex
+) => {
   const supabase = await supabaseClient(token);
 
   let query = supabase
     .from("jobs")
-    .select("*, company: companies(name,logo_url), saved: saved_jobs(id)");
+    .select("*, company: companies(name,logo_url), saved: saved_jobs(id)")
+    .range(startIndex, endIndex);
 
   if (location) {
     query = query.eq("location", location);
@@ -126,6 +132,41 @@ export const getSavedJobs = async (token) => {
 
   if (error) {
     console.error("Error fetching Saved Jobs: ", error);
+    return;
+  }
+
+  return data;
+};
+
+// get user jobs
+export const getMyJob = async (token, { recruiter_id }) => {
+  const supabase = await supabaseClient(token);
+
+  const { data, error } = await supabase
+    .from("jobs")
+    .select("*, company: companies(name,logo_url)")
+    .eq("recruiter_id", recruiter_id);
+
+  if (error) {
+    console.error("Error fetching Jobs: ", error);
+    return;
+  }
+
+  return data;
+};
+
+// delete a job
+export const deleteJob = async (token, { job_id }) => {
+  const supabase = await supabaseClient(token);
+
+  const { data, error } = await supabase
+    .from("jobs")
+    .delete()
+    .eq("id", job_id)
+    .select();
+
+  if (error) {
+    console.error("Error deleting Jobs: ", error);
     return;
   }
 

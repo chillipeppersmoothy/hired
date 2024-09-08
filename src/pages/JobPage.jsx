@@ -49,6 +49,7 @@ const JobPage = () => {
   const isRecruiter = job?.recruiter_id === user?.id;
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     if (isLoaded) fnJob();
   }, [isLoaded]);
 

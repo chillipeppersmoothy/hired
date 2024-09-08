@@ -36,7 +36,6 @@ const ApplyJob = ({ user, job, applied = false, fetchJob }) => {
   } = useFetch(applyToJob);
 
   const onSubmit = (data) => {
-    console.log(data);
     fnApply({
       ...data,
       job_id: job.id,

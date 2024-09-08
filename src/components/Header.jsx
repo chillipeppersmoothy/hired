@@ -1,4 +1,3 @@
-import { Link, useSearchParams } from "react-router-dom";
 import {
   SignedIn,
   SignedOut,
@@ -6,9 +5,10 @@ import {
   UserButton,
   useUser,
 } from "@clerk/clerk-react";
-import { Button } from "./ui/button";
 import { BriefcaseBusiness, Heart, PenBox } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import { Button } from "./ui/button";
 
 const Header = () => {
   const [showSignIn, setShowSignIn] = useState(false);
@@ -32,29 +32,31 @@ const Header = () => {
     <>
       <nav className="py-4 flex justify-between items-center">
         <span className="flex justify-center items-center">
-          <Link>
+          <Link to="/">
             <img src="logo.png" className="h-20" alt="hired logo" />
           </Link>
-          <h1 className="text-5xl font-bold pl-5 sm:pl-1 lg:pl-8">HIRED</h1>
+          <Link to="/">
+            <h1 className="text-5xl font-bold pl-5 sm:pl-1 lg:pl-8">HIRED</h1>
+          </Link>
         </span>
 
         <div className="flex gap-4">
           {user?.unsafeMetadata.role === "recruiter" && (
             <Link to="/post-job">
-              <Button variant="outline" className="rounded-full" type="button">
+              <Button variant="link" type="button">
                 <PenBox size={20} className="mr-2" />
                 Post a Job
               </Button>
             </Link>
           )}
           <Link to="/my-jobs">
-            <Button variant="outline" className="rounded-full" type="button">
+            <Button variant="link" type="button">
               <BriefcaseBusiness size={20} className="mr-2" />
               My Jobs
             </Button>
           </Link>
           <Link to="/saved-jobs">
-            <Button variant="outline" className="rounded-full" type="button">
+            <Button variant="link" type="button">
               <Heart size={20} className="mr-2" />
               Saved Jobs
             </Button>

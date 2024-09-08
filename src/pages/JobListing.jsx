@@ -1,13 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useUser } from "@clerk/clerk-react";
-import { State } from "country-state-city";
-import { useEffect, useState } from "react";
-import { BarLoader } from "react-spinners";
-import { getCompanies } from "../api/apiCompanies";
-import { getJobs } from "../api/apiJobs";
 import JobCard from "@/components/JobCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import {
   Select,
   SelectContent,
@@ -16,23 +18,23 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+import { useUser } from "@clerk/clerk-react";
+import { State } from "country-state-city";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { BarLoader } from "react-spinners";
+import { getCompanies } from "../api/apiCompanies";
+import { getJobs } from "../api/apiJobs";
 import useFetch from "../hooks/useFetch";
 
 const JobListing = () => {
   const [location, setLocation] = useState("");
   const [company_id, setCompany_id] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-
   const { isLoaded, user } = useUser();
+  const [query] = useSearchParams();
+  let [startIndex = "1", endIndex = "6"] = query.getAll("job");
+  const navigate = useNavigate();
 
   const {
     fn: fnJobs,
@@ -55,17 +57,39 @@ const JobListing = () => {
     setLocation("");
     setCompany_id("");
     setSearchQuery("");
+    navigate(`/jobs?job=${startIndex}&job=${endIndex}`, { replace: "true" });
+  };
+
+  const handlePrevIndex = () => {
+    if (startIndex === "13") {
+      navigate("/jobs?job=7&job=12");
+    } else {
+      navigate("/jobs?job=1&job=6");
+    }
+  };
+
+  const handleNextIndex = () => {
+    if (startIndex === "1") {
+      navigate("/jobs?job=7&job=12");
+    } else if (startIndex === "7") {
+      navigate("/jobs?job=13&job=18");
+    }
   };
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     fnCompanies();
+    navigate("/jobs?job=1&job=6");
   }, []);
 
   useEffect(() => {
-    fnJobs();
-  }, [isLoaded, location, company_id, searchQuery]);
+    fnJobs(startIndex - 1, endIndex - 1);
+    if (location || company_id || searchQuery.length) {
+      navigate("/jobs", { replace: "true" });
+    }
+  }, [isLoaded, location, company_id, searchQuery, startIndex, endIndex]);
 
-  if (!isLoaded) {
+  if (!isLoaded || loadingJobs) {
     return <BarLoader className="mb-4" width={"100%"} color="#36d7b7" />;
   }
 
@@ -75,7 +99,6 @@ const JobListing = () => {
         Latest Jobs
       </h1>
 
-      {/* Add filters here */}
       <form
         onSubmit={handleSearch}
         className="h-14 flex w-full gap-2 items-center mb-3"
@@ -144,36 +167,62 @@ const JobListing = () => {
       )}
 
       {loadingJobs === false && (
-        <div className="mt-8 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <>
           {jobs && jobs.length ? (
-            jobs.map((job) => (
-              <JobCard
-                key={job.id}
-                job={job}
-                isMyJob={job.recruiter_id === user.id}
-                previouslySaved={job?.saved?.length > 0}
-              />
-            ))
+            <div className="mt-8 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {jobs.map((job) => (
+                <JobCard
+                  key={job.id}
+                  job={job}
+                  isMyJob={job.recruiter_id === user.id}
+                  previouslySaved={job?.saved?.length > 0}
+                  onJobSaved={fnJobs}
+                />
+              ))}
+            </div>
           ) : (
-            <div>No Jobs Found 😟</div>
+            <div className="flex justify-center items-center m-10 text-xl">
+              No Jobs Found 😟
+            </div>
           )}
-        </div>
+        </>
       )}
-      {/* WIP */}
       <Pagination className="mt-10">
         <PaginationContent>
+          {startIndex !== "1" && endIndex !== "6" && (
+            <PaginationItem>
+              <PaginationPrevious onClick={handlePrevIndex} />
+            </PaginationItem>
+          )}
           <PaginationItem>
-            <PaginationPrevious href="#" />
+            <PaginationLink
+              linkTo={`/jobs?job=1&job=6`}
+              isActive={startIndex === "1" && endIndex === "6"}
+            >
+              1
+            </PaginationLink>
           </PaginationItem>
           <PaginationItem>
-            <PaginationLink href="#">1</PaginationLink>
+            <PaginationLink
+              linkTo={"/jobs?job=7&job=12"}
+              isActive={startIndex === "7" && endIndex === "12"}
+            >
+              2
+            </PaginationLink>
           </PaginationItem>
           <PaginationItem>
-            <PaginationEllipsis />
+            <PaginationLink
+              linkTo={"/jobs?job=13&job=18"}
+              isActive={startIndex === "13" && endIndex === "18"}
+            >
+              3
+            </PaginationLink>
           </PaginationItem>
-          <PaginationItem>
-            <PaginationNext href="#" />
-          </PaginationItem>
+          {startIndex !== "13" && endIndex !== "18" && (
+            <PaginationItem>
+              <PaginationNext onClick={handleNextIndex} />
+            </PaginationItem>
+          )}
         </PaginationContent>
       </Pagination>
     </div>
