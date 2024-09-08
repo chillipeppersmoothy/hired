@@ -16,6 +16,7 @@ const SavedJobs = () => {
   } = useFetch(getSavedJobs);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     if (isLoaded) {
       fnSavedJobs();
     }
@@ -33,7 +34,7 @@ const SavedJobs = () => {
 
       {loadingSavedJobs === false && (
         <>
-          {savedJobs?.length ? (
+          {savedJobs && savedJobs.length ? (
             <div className="mt-8 grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {savedJobs.map((savedJob) => (
                 <JobCard
@@ -45,7 +46,7 @@ const SavedJobs = () => {
               ))}
             </div>
           ) : (
-            <div className="flex justify-center items-center">
+            <div className="flex justify-center items-center m-10 text-xl">
               No Saved Jobs Found 👀
             </div>
           )}

@@ -71,8 +71,6 @@ const LandingPage = () => {
         <CarouselNext />
       </Carousel>
 
-      <img src="logo.png" alt="banner imagge" className="w-full" />
-
       <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card>
           <CardHeader>

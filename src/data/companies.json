@@ -38,5 +38,35 @@
         "name": "uber",
         "path": "/companies/uber.svg",
         "id": 8
+    },
+    {
+        "name": "adobe",
+        "path": "/companies/adobe.png",
+        "id": 9
+    },
+    {
+        "name": "oracle",
+        "path": "/companies/oracle.png",
+        "id": 11
+    },
+    {
+        "name": "walmart",
+        "path": "/companies/walmart.png",
+        "id": 12
+    },
+    {
+        "name": "visa",
+        "path": "/companies/visa.png",
+        "id": 13
+    },
+    {
+        "name": "tesla",
+        "path": "/companies/tesla.png",
+        "id": 14
+    },
+    {
+        "name": "samsung",
+        "path": "/companies/samsung.png",
+        "id": 15
     }
 ]
