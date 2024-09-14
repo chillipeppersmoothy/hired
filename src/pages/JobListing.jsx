@@ -18,13 +18,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useUser } from "@clerk/clerk-react";
+import { useSession, useUser } from "@clerk/clerk-react";
 import { State } from "country-state-city";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { BarLoader } from "react-spinners";
 import { getCompanies } from "../api/apiCompanies";
-import { getJobs } from "../api/apiJobs";
+import { getJobs, getAllJob } from "../api/apiJobs";
 import useFetch from "../hooks/useFetch";
 
 const JobListing = () => {
@@ -35,6 +35,9 @@ const JobListing = () => {
   const [query] = useSearchParams();
   let [startIndex = "1", endIndex = "6"] = query.getAll("job");
   const navigate = useNavigate();
+  const [allCompanies, setAllCompanies] = useState([]);
+  const { session } = useSession();
+  const page = useRef(1);
 
   const {
     fn: fnJobs,
@@ -60,26 +63,33 @@ const JobListing = () => {
     navigate(`/jobs?job=${startIndex}&job=${endIndex}`, { replace: "true" });
   };
 
-  const handlePrevIndex = () => {
-    if (startIndex === "13") {
-      navigate("/jobs?job=7&job=12");
-    } else {
-      navigate("/jobs?job=1&job=6");
-    }
+  const handlePrevIndex = (index) => {
+    startIndex = noOfJobsPerPage * (index - 2) + 1;
+    endIndex = noOfJobsPerPage * (index - 1);
+    page.current--;
+    navigate(`/jobs?job=${startIndex}&job=${endIndex}`);
   };
 
-  const handleNextIndex = () => {
-    if (startIndex === "1") {
-      navigate("/jobs?job=7&job=12");
-    } else if (startIndex === "7") {
-      navigate("/jobs?job=13&job=18");
-    }
+  const handleNextIndex = (index) => {
+    startIndex = noOfJobsPerPage * index + 1;
+    endIndex = noOfJobsPerPage * (index + 1);
+    page.current++;
+    navigate(`/jobs?job=${startIndex}&job=${endIndex}`);
+  };
+
+  const generateToken = async () => {
+    const supabaseAccessToken = await session.getToken({
+      template: "supabase",
+    });
+    await getAllJob(supabaseAccessToken).then((data) => setAllCompanies(data));
   };
 
   useEffect(() => {
     window.scrollTo(0, 0);
+    generateToken();
+
     fnCompanies();
-    navigate("/jobs?job=1&job=6");
+    navigate(`/jobs?job=${startIndex}&job=${endIndex}`);
   }, []);
 
   useEffect(() => {
@@ -88,6 +98,21 @@ const JobListing = () => {
       navigate("/jobs", { replace: "true" });
     }
   }, [isLoaded, location, company_id, searchQuery, startIndex, endIndex]);
+
+  const noOfJobsPerPage = 6;
+  const additionalJobs = allCompanies.length % noOfJobsPerPage;
+  let noOfPages = Math.floor(allCompanies.length / noOfJobsPerPage);
+  if (additionalJobs) noOfPages++;
+  const jobsArray = Array.from({ length: noOfPages }).map(
+    (_, index) => index + 1
+  );
+
+  const handleLink = (index) => {
+    startIndex = noOfJobsPerPage * (index - 1) + 1;
+    endIndex = noOfJobsPerPage * index;
+    page.current = index;
+    navigate(`/jobs?job=${startIndex}&job=${endIndex}`);
+  };
 
   if (!isLoaded || loadingJobs) {
     return <BarLoader className="mb-4" width={"100%"} color="#36d7b7" />;
@@ -187,40 +212,31 @@ const JobListing = () => {
           )}
         </>
       )}
+
       <Pagination className="mt-10">
         <PaginationContent>
-          {startIndex !== "1" && endIndex !== "6" && (
+          {startIndex !== "1" && (
             <PaginationItem>
-              <PaginationPrevious onClick={handlePrevIndex} />
+              <PaginationPrevious
+                onClick={() => handlePrevIndex(page.current)}
+              />
             </PaginationItem>
           )}
-          <PaginationItem>
-            <PaginationLink
-              linkTo={`/jobs?job=1&job=6`}
-              isActive={startIndex === "1" && endIndex === "6"}
-            >
-              1
-            </PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink
-              linkTo={"/jobs?job=7&job=12"}
-              isActive={startIndex === "7" && endIndex === "12"}
-            >
-              2
-            </PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink
-              linkTo={"/jobs?job=13&job=18"}
-              isActive={startIndex === "13" && endIndex === "18"}
-            >
-              3
-            </PaginationLink>
-          </PaginationItem>
-          {startIndex !== "13" && endIndex !== "18" && (
+          {jobsArray &&
+            jobsArray.length &&
+            jobsArray.map((_, index) => (
+              <PaginationItem key={index}>
+                <PaginationLink
+                  isActive={endIndex == noOfJobsPerPage * (index + 1)}
+                  onClick={() => handleLink(index + 1)}
+                >
+                  {index + 1}
+                </PaginationLink>
+              </PaginationItem>
+            ))}
+          {endIndex != noOfJobsPerPage * noOfPages && (
             <PaginationItem>
-              <PaginationNext onClick={handleNextIndex} />
+              <PaginationNext onClick={() => handleNextIndex(page.current)} />
             </PaginationItem>
           )}
         </PaginationContent>

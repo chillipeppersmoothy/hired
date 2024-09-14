@@ -17,3 +17,63 @@
   overflow: hidden;
   background-color: #000;
 }
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 190px;
+  z-index: 999;
+  background-color: rgba(255, 255, 255, 0);
+  backdrop-filter: blur(10px);
+  box-shadow: -10px 0 10px rgba(0, 0, 0, 0.5);
+  display: none;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  transition: 1s ease-out;
+}
+
+.sidebar a {
+  width: 100%;
+  padding: 5px;
+}
+
+.menu-button {
+  display: none;
+}
+
+.profile {
+  display: flex;
+}
+
+@media (max-width: 740px) {
+  .hideOnMobile {
+    display: none;
+  }
+
+  .menu-button {
+    display: flex;
+    transition: 1s ease-out;
+  }
+
+  .profile {
+    display: none;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .img-c {
+    width: 100px;
+    height: 50px;
+    flex-basis: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}

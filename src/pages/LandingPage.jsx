@@ -55,15 +55,20 @@ const LandingPage = () => {
           }),
         ]}
       >
-        <CarouselContent className="flex gap-5 sm:gap-20 items-center">
+        <CarouselContent className="flex gap-5 sm:gap-10 items-center ">
           {companies &&
             companies.map(({ name, id, path }) => (
-              <CarouselItem key={id} className="basis-1/3 lg:basis-1/6 px-10">
-                <img
-                  src={path}
-                  alt={name}
-                  className="h-9 sm:h-14 object-contain"
-                ></img>
+              <CarouselItem
+                key={id}
+                className="basis-1/3 lg:basis-1/6 sm:basis-1/2 px-10"
+              >
+                <div className="img-c">
+                  <img
+                    src={path}
+                    alt={name}
+                    className="h-9 sm:h-14 object-contain"
+                  ></img>
+                </div>
               </CarouselItem>
             ))}
         </CarouselContent>

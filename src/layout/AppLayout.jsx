@@ -9,11 +9,14 @@ const AppLayout = () => {
       <div className="grid-background">
         <StarBackground />
       </div>
-      <main className="min-h-screen container max-w-none px-20 sm:px-10 lg:px-28">
+      <div className="px-2">
         <Header />
+      </div>
+
+      <main className="min-h-screen container max-w-none px-10 sm:px-10 lg:px-28">
         <Outlet />
       </main>
-      <div className="p-5 text-center bg-black mt-5">
+      <div className="flex justify-center w-full py-10">
         Made by Aditya Shenoy K
       </div>
     </div>

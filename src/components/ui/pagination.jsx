@@ -30,15 +30,8 @@ const PaginationItem = React.forwardRef(({ className, ...props }, ref) => (
 ));
 PaginationItem.displayName = "PaginationItem";
 
-const PaginationLink = ({
-  className,
-  isActive,
-  linkTo,
-  size = "icon",
-  ...props
-}) => (
+const PaginationLink = ({ className, isActive, size = "icon", ...props }) => (
   <Link
-    to={linkTo}
     aria-current={isActive ? "page" : undefined}
     className={cn(
       buttonVariants({

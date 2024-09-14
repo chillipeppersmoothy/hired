@@ -56,6 +56,24 @@ export const getSingleJob = async (token, { job_id }) => {
   return data;
 };
 
+// get all job
+export const getAllJob = async (token) => {
+  const supabase = await supabaseClient(token);
+
+  const { data, error } = await supabase
+    .from("jobs")
+    .select(
+      "*, company: companies(name,logo_url), applications: applications(*)"
+    );
+
+  if (error) {
+    console.error("Error fetching all Job: ", error);
+    return;
+  }
+
+  return data;
+};
+
 // post new job
 export const addNewJob = async (token, _, jobData) => {
   const supabase = await supabaseClient(token);
